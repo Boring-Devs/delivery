@@ -1,10 +1,8 @@
 import { delivery } from './delievery';
 
-const url = 'https://api.github.com/user';
+const url = 'https://api.github.com/users/nicasiomarques';
 
-delivery(url, {
-  method: 'get',
-})
+delivery(url, { method: 'get' })
   .notFound(console.log)
   .unauthorized(console.log)
   .forbidden(console.log)
