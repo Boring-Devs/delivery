@@ -1,50 +1,34 @@
+// Todo: remove node-fetch types to prevent coupling. Build our own types to reduce coupling.
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
-import { Devilery } from './delievery';
-import { mapStatusToDeliveryFunction } from './delivery-mappers';
 
-export const delivery = (url: RequestInfo, init?: RequestInit | undefined) => {
+import { mapStatusToDeliveryFunction } from '@/delievery/core/contracts/http';
+import { runIfExists } from '@/delievery/utils/operators';
+import { Devilery } from '@/delievery/data/delievery';
+
+export const delivery = (url: RequestInfo, init?: RequestInit) => {
   const deliveryObject = new Devilery();
 
   fetch(url, init)
     .then((response) => {
-      const { status: httpStatusCode } = response;
-      const itsOkay = httpStatusCode > 199 && httpStatusCode < 300;
+      const { status: statusCode } = response;
+      const isOk = statusCode > 199 && statusCode < 300;
 
-      if (itsOkay) {
-        if (deliveryObject.onSuccessCallback)
-          deliveryObject.onSuccessCallback(response);
-      }
+      if (isOk) runIfExists(deliveryObject.onSuccess, response);
 
-      mapStatusToDeliveryFunction.forEach((deliveryStatus) => {
-        if (httpStatusCode === deliveryStatus.status) {
+      mapStatusToDeliveryFunction.forEach(deliveryStatus => {
+        if (statusCode === deliveryStatus.status) {
           const key = deliveryStatus.key as keyof typeof deliveryObject;
-
-          // TODO: fix those any ASAP
-          if (deliveryObject[key])
-            ((deliveryObject[key] || ((e: any) => {})) as any)(
-              new Error(deliveryStatus.message) as any
-            );
+          runIfExists(deliveryObject[key], new Error(deliveryStatus.message));
         }
       });
 
-      response
-        .json()
-        .then((data) => {
-          if (deliveryObject.onJsonCallback) {
-            deliveryObject.onJsonCallback(!itsOkay, data);
-          }
-        })
-        .catch((_) => {
-          if (deliveryObject.onClientErrorCallback)
-            deliveryObject.onClientErrorCallback(
-              new Error("Coultn't parse data to json")
-            );
-        });
+      response.json()
+        .then(data => runIfExists(deliveryObject.onJson, !isOk, data))
+        .catch((_) => runIfExists(
+          deliveryObject.onClientError,
+          new Error("Coultn't parse data to json")
+        ));
     })
-    .catch((error) => {
-      if (deliveryObject.onClientErrorCallback)
-        deliveryObject.onClientErrorCallback(error);
-    });
-
+    .catch(runIfExists(deliveryObject.onClientError));
   return deliveryObject;
 };
