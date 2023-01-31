@@ -1,6 +1,6 @@
 import { HTTP_ERROR_CODES, HTTP_ERROR_MESSAGES,  } from ".";
 
-export const mapStatusToDeliveryFunction = [
+export const mapStatusDelivery = [
   {
     status: HTTP_ERROR_CODES.BAD_REQUEST,
     message: HTTP_ERROR_MESSAGES.BAD_REQUEST,
