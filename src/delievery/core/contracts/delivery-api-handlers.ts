@@ -1,6 +1,9 @@
-import { IResponse } from "./http";
+import { ResponseType } from 'axios';
+import { Response } from 'node-fetch';
 
-export type TSuccess = (response: IResponse) => DeliveryApi | void;
+export type TSuccess = (
+  response: Response | ResponseType
+) => DeliveryApi | void;
 export type TError = (error: Error) => DeliveryApi | void;
 export type TJson<T = any> = (hasError: boolean, data: T) => void;
 
@@ -13,7 +16,7 @@ type TDeliveryCallbacks = {
   onNotFound: TError;
   onClientError: TError;
   onJson: TJson;
-}
+};
 
 export interface DeliveryApi extends Partial<TDeliveryCallbacks> {
   success(callback: TSuccess): DeliveryApi;

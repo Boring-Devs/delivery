@@ -2,12 +2,12 @@ import { AxiosResponse } from 'axios';
 
 import BaseAdapter from './base.type';
 import { mapStatusDelivery } from '../contracts/http';
-import { Devilery } from '@/delievery/data/delievery';
-import { propEq, runIfExists } from '@/delievery/utils/operators';
+import { Devilery } from '../../data/delievery';
+import { propEq, runIfExists } from '../../utils/operators';
 
 export type AxiosResult = Promise<AxiosResponse<any, any>>;
 
-export const AxiosAdapter: BaseAdapter<AxiosResult> = axiosResult => {
+export const AxiosAdapter: BaseAdapter<AxiosResult> = (axiosResult) => {
   const deliveryObject = new Devilery();
 
   (async () => {
@@ -36,4 +36,4 @@ export const AxiosAdapter: BaseAdapter<AxiosResult> = axiosResult => {
   })();
 
   return deliveryObject;
-}
+};

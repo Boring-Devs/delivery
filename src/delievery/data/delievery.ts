@@ -1,4 +1,9 @@
-import { DeliveryApi, TError, TJson, TSuccess } from "@/delievery/core/contracts/delivery-api-handlers";
+import {
+  DeliveryApi,
+  TError,
+  TJson,
+  TSuccess,
+} from '../core/contracts/delivery-api-handlers';
 
 export class Devilery implements DeliveryApi {
   onBadRequest?: TError;
