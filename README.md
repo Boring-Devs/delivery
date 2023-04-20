@@ -15,8 +15,6 @@ npm install @boring-devs/delivery
 To use Delivery in your project, first import the library:
 
 ```javascript
-import axios from 'axios';
-import fetch from 'node-fetch';
 import { fromAxios, fromFetch } from '@boring-devs/delivery';
 ```
 
